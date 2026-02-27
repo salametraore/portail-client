@@ -1,0 +1,1717 @@
+@use '@angular/material' as mat;
+
+/* ============ THEME MATERIAL (Rose style “badge”) ============ */
+@include mat.core();
+
+/* Palette Material plus douce et proche du chip de la capture */
+$primary: mat.define-palette(mat.$pink-palette, 300);   /* ≈ #F06292 */
+$accent:  mat.define-palette(mat.$pink-palette, A100);  /* ≈ #FF80AB */
+$warn:    mat.define-palette(mat.$deep-orange-palette);
+
+$theme: mat.define-light-theme((
+  color: (primary: $primary, accent: $accent, warn: $warn),
+  typography: mat.define-typography-config(),
+  density: -1
+));
+@include mat.all-component-themes($theme);
+
+/* ============ VARIABLES CSS (surfaces/texte/bordures) ============ */
+:root {
+  /* Rose EXACT utilisé par l’UI custom (badges, entêtes, barres, etc.) */
+  --brand-primary: #FF6B8E;
+  --brand-primary-contrast: #ffffff;
+
+  /* surfaces & texte */
+  --surface: #ffffff;
+  --surface-alt: color-mix(in srgb, var(--brand-primary) 10%, #fff 90%); /* rose très pâle */
+  --text: #2b2b2b;
+  --text-muted: #5a5a5a;
+
+  /* bordures */
+  --border-weak:  color-mix(in srgb, var(--brand-primary) 14%, #fff 86%);
+  --border-strong: color-mix(in srgb, var(--brand-primary) 30%, #fff 70%);
+}
+
+/* SCSS legacy (si besoin ponctuel) */
+$brand:     #FF6B8E;
+$brand-600: #FF577F;
+$brand-400: #FF86A3;
+
+/* ============ GLOBAL / WATERMARK ============ */
+html, body { height: 100%; background: #FAFAFA; color: var(--text); }
+
+.app-content {
+  position: relative;
+  min-height: 100vh;
+}
+
+.app-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--bg-image);
+  background-repeat: no-repeat;
+  background-position: center 20%;
+  background-size: 520px auto;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-content > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media print { mat-sidenav-content::before { display: none; } }
+
+/* ============ SIDENAV ============ */
+.sidenav {
+  background-color: var(--surface-alt);
+  color: #7A003D;
+}
+.sidenav .mat-list-item,
+.sidenav a.mat-list-item {
+  color: inherit; border-radius: 10px; margin: 4px 6px;
+}
+.sidenav .mat-list-item:hover,
+.sidenav a.mat-list-item:hover {
+  background: color-mix(in srgb, var(--brand-primary) 14%, #fff 86%);
+}
+.menu-panel .mat-expansion-panel-header { background: transparent; }
+.menu-panel.mat-expansion-panel {
+  background: transparent; box-shadow: none;
+  border: 1px solid var(--border-weak); border-radius: 12px; margin: 6px 6px 10px;
+}
+
+/* ============ TOOLBAR / TITRE ============ */
+mat-toolbar { height: 30px; .mat-mdc-toolbar-row { min-height: 30px; } }
+
+.app-toolbar .app-title {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px; margin-left: 8px;
+  border-radius: 8px;
+  background-color: var(--surface-alt);
+  border: 1px solid var(--border-weak);
+  color: color-mix(in srgb, var(--brand-primary) 70%, #000 30%);
+  font-weight: 600; line-height: 1.2; white-space: nowrap;
+}
+
+/* ============ BLOCS / CARTES / LISTES ============ */
+.list-box, mat-card.card, mat-card.list-box {
+  background: var(--surface);
+  border: 1px solid var(--border-weak) !important;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+}
+.list-header{
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--border-weak) !important;
+}
+.list-title{ margin: .25rem 0; font-weight: 600; font-size: 1.1rem; }
+.list-actions{ margin-left: auto; display: flex; gap: 8px; }
+.list-body{ padding: 10px 12px 12px; }
+.blank-row{ height: 12px; }
+
+/* boutons */
+.btn_details { color: $brand; }
+.btn_edit    { color: $brand; }
+.btn_delete  { color: #d32f2f; }
+.primary     { color: $brand; text-align: center; }
+button { margin-left: 5px; }
+
+/* ============ TABLES ============ */
+.mat-mdc-table .mat-mdc-header-row {
+  background-color: var(--brand-primary);
+  color: var(--brand-primary-contrast);
+}
+.mat-mdc-table .mat-mdc-header-cell { color: var(--brand-primary-contrast); }
+.mat-mdc-table .mat-sort-header-arrow { color: var(--brand-primary-contrast) !important; opacity: 1 !important; }
+.mat-mdc-table .mat-mdc-header-row.mat-mdc-table-sticky { border-bottom: 1px solid rgba(0,0,0,.12); }
+
+/* Zebra rose clair */
+.mat-mdc-table .mat-mdc-row { height: 30px; }
+.mat-mdc-table .mat-mdc-row:not(.selected):nth-child(odd)  { background-color: #fff; }
+.mat-mdc-table .mat-mdc-row:not(.selected):nth-child(even) { background-color: color-mix(in srgb, var(--brand-primary) 8%, #fff 92%); }
+.mat-mdc-table .mat-mdc-row:not(.selected):hover { background-color: color-mix(in srgb, var(--brand-primary) 14%, #fff 86%); }
+.selected { background-color: color-mix(in srgb, var(--brand-primary) 28%, #fff 72%) !important; }
+.mat-mdc-table .mat-mdc-cell, .mat-mdc-table .mat-mdc-footer-cell { border-bottom: 1px solid rgba(0,0,0,.06); }
+
+/* Paginator icônes en primaire */
+.mat-mdc-paginator {
+  --mat-paginator-container-size: 36px;
+  --mat-paginator-enabled-icon-color: var(--brand-primary);
+}
+
+/* ============ FILTRES (centrés, compacts) ============ */
+.filters{
+  display: flex; justify-content: center;
+  border: 1px solid var(--border-weak) !important;
+  border-radius: 6px; background: var(--surface);
+  padding: 12px 14px; margin-bottom: 12px;
+}
+.filters-grid{
+  display: grid;
+  grid-template-columns: repeat(5, 220px);
+  gap: 10px; align-items: end; justify-content: center;
+}
+.filters mat-form-field{ width: 220px; margin: 0; }
+.filters .mdc-text-field--outlined{
+  height: 40px;
+  --mdc-outlined-text-field-outline-color: color-mix(in srgb, var(--brand-primary) 45%, #6b6b6b);
+  --mdc-outlined-text-field-hover-outline-color: color-mix(in srgb, var(--brand-primary) 55%, #545454);
+  --mdc-outlined-text-field-focus-outline-color: var(--brand-primary);
+}
+.filters .mat-mdc-form-field-infix{ padding: 8px 0 10px; }
+.filters .mat-mdc-form-field-subscript-wrapper{ display: none; }
+
+@media (max-width: 1400px){ .filters-grid{ grid-template-columns: repeat(4, 220px); } }
+@media (max-width: 1100px){ .filters-grid{ grid-template-columns: repeat(3, 220px); } }
+@media (max-width: 800px) { .filters-grid{ grid-template-columns: repeat(2, 220px); } }
+
+/* Variante "une ligne sans scroll" */
+.filters--one-line { overflow: hidden; }
+.filters--one-line .filters-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(140px, 1fr)) 40px 40px;
+  column-gap: 10px; align-items: end; justify-content: stretch;
+}
+.filters--one-line .filters-grid mat-form-field { width: 100%; margin: 0; }
+.filters--one-line .filters-grid .action-btn { width: 40px; height: 40px; align-self: end; }
+@media (max-width: 1280px) {
+  .filters--one-line .filters-grid { grid-template-columns: repeat(5, minmax(130px, 1fr)) 40px 40px; }
+}
+@media (max-width: 1100px) {
+  .filters--one-line .filters-grid { grid-template-columns: repeat(5, minmax(120px, 1fr)) 40px 40px; }
+}
+.filters--one-line .mdc-text-field--outlined { height: 38px; }
+.filters--one-line .mat-mdc-form-field-infix { padding: 6px 0 8px; }
+
+/* ============ FORM / DIALOGS ============ */
+.form-grid{ display: flex; flex-direction: column; gap: 12px; }
+.form-section-title{ font-weight: 600; margin-top: 6px; color: #444; }
+.radio-line{ display: flex; gap: 24px; align-items: center; padding: 4px 2px; }
+.form-actions{ display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+
+.dialog-title-rose{
+  background: var(--brand-primary);
+  color: var(--brand-primary-contrast);
+  border: 2px solid var(--brand-primary);
+  border-radius: 6px 6px 0 0;
+  padding: 10px 12px; margin: 0; font-size: 1.1rem; font-weight: 600;
+}
+.dialog-content{ padding: 12px !important; }
+.list-box--compact .list-header{ padding: 8px 10px; }
+.list-box--compact .list-body{ padding: 10px 10px 12px; }
+
+/* ============ PAGE TITLE BAR ============ */
+.page-title{
+  background: var(--brand-primary);
+  color: var(--brand-primary-contrast);
+  border: 2px solid var(--brand-primary);
+  border-radius: 6px;
+  padding: 10px 12px; margin-bottom: 12px;
+}
+.page-title h2{ margin: 0; font-size: 1.3rem; font-weight: 600; }
+.page-title.with-icon{ display: flex; align-items: center; gap: 8px; }
+.page-title.with-icon .mat-icon{ color: var(--brand-primary-contrast); }
+
+/* ============ CHECKBOX / RADIO COULEURS MARQUE ============ */
+mat-checkbox {
+  --mdc-checkbox-selected-focus-state-layer-color: #{$brand};
+  --mdc-checkbox-selected-checkmark-color: white;
+  --mdc-checkbox-selected-focus-icon-color: #{$brand};
+  --mdc-checkbox-selected-hover-icon-color: #{$brand-600};
+  --mdc-checkbox-selected-icon-color: #{$brand};
+}
+.mat-mdc-radio-button.mat-accent {
+  --mdc-radio-selected-focus-icon-color: #{$brand};
+  --mdc-radio-selected-hover-icon-color: #{$brand};
+  --mdc-radio-selected-icon-color: #{$brand};
+  --mdc-radio-selected-pressed-icon-color: #{$brand};
+  --mat-radio-checked-ripple-color: #{$brand-400};
+}
+
+/* ============ TIMELINE CARDS ============ */
+.mat-mdc-card.timeline-card,
+.mat-mdc-card.dark-card {
+  background-color: color-mix(in srgb, var(--brand-primary) 8%, #fff 92%) !important;
+}
+@supports not (color: color-mix(in srgb, #000, #fff)) {
+  .mat-mdc-card.timeline-card,
+  .mat-mdc-card.dark-card { background-color: #fbe8f1 !important; }
+}
+
+/* ============ ACCESSIBILITÉ : focus visible ============ */
+.mat-focus-indicator:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.mat-mdc-form-field:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 30%, #fff 70%);
+  border-radius: 6px;
+}
+
+/* Focus visible : boutons & liens uniquement */
+.mat-focus-indicator:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 30%, #fff 70%);
+  border-radius: 6px;
+}
+
+/* Jamais de halo sur les champs */
+.mat-mdc-form-field:focus-within {
+  box-shadow: none !important;
+}
+
+/* ============ DIVERS UTILES ============ */
+.search-div{ margin: 10px; }
+.search-form-field{ width: 70%; }
+div[align="end"] { text-align: right; }
+.input-full-width{ width: 100%; box-sizing: border-box; }
+.spinner-container{
+  position: absolute; inset: 0; display:flex; justify-content:center; align-items:center;
+  background: rgba(0, 0, 0, 0.32); z-index: 20000;
+}
+input, textarea { text-transform: uppercase; }
+.mat-mdc-button_label { color: white; }
+.mat-mdc-menu-item .mat-icon { margin-right: .5rem; }
+div[cdkDrag] { cursor: move; }
+
+/* Variante 75 / 25 pour les pages avec historique à droite */
+.two-col--75-25 {
+  display: grid;
+  grid-template-columns: 3fr 1fr; /* 75% / 25% */
+  gap: 1rem;
+}
+
+/* Même règle de repli que ta grille par défaut */
+@media (max-width: 1100px){
+  .two-col--75-25 { grid-template-columns: 1fr; }
+}
+
+.timeline-viewport {
+  height: 60vh;
+  width: 100%;
+  overflow: auto;
+  padding: 8px 6px;
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
+}
+
+/* garde l’espacement/arrondis/ombre, mais PAS de background ici */
+.dark-card {
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Scrollbar optionnelle */
+.timeline-viewport::-webkit-scrollbar { width: 8px; }
+.timeline-viewport::-webkit-scrollbar-thumb { background: #bdbdbd; border-radius: 4px; }
+
+.empty { padding: 8px; color: #666; text-align: center; }
+
+/* === PATCH "limites des zones" — bordures nettes et visibles === */
+
+/* 1) Renforcer les variables de bordure */
+:root {
+  /* augmente légèrement l’intensité */
+  --border-weak:  color-mix(in srgb, var(--brand-primary) 22%, #fff 78%);
+  --border-strong: color-mix(in srgb, var(--brand-primary) 40%, #fff 60%);
+}
+
+/* 2) Filtres : cadre bien visible */
+.filters {
+  background: #fff;
+  border: 2px solid var(--brand-primary) !important;
+  border-radius: 8px;
+}
+
+/* 3) Cadres “list-box” (sections + mat-card éventuels) */
+section.list-box,
+.list-box,
+mat-card.list-box {
+  background: #fff;
+  border: 2px solid var(--brand-primary) !important;
+  border-radius: 8px;
+  box-shadow: none; /* on s’appuie sur la bordure, pas sur l’ombre */
+}
+
+/* 4) En-tête du bloc (séparateur bas marqué) */
+.list-header {
+  border-bottom: 2px solid var(--border-strong) !important;
+}
+
+/* 5) Barre de titre de page (rose) */
+.page-title {
+  background: var(--brand-primary);
+  color: var(--brand-primary-contrast);
+  border: 2px solid var(--brand-primary) !important;
+  border-radius: 8px;
+}
+
+/* 6) Encadrer le conteneur table + paginator pour une limite continue */
+.compact-table {
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  overflow: hidden; /* la bordure entoure l’ensemble */
+}
+
+/* 7) (Optionnel) Donner un trait très léger à TOUTES les cartes, si tu le souhaites */
+.mat-mdc-card:not(.list-box) {
+  border: 1px solid var(--border-weak);
+  border-radius: 8px;
+}
+
+/* 8) Fallback si color-mix n’est pas supporté */
+@supports not (color: color-mix(in srgb, #000, #fff)) {
+  :root {
+    --border-weak:  #e8b9cc;  /* rose très pâle */
+    --border-strong:#d98aa8;  /* rose un peu plus soutenu */
+  }
+}
+
+/* Carte d'info avec bordure rose clair et fond très léger */
+.info-card {
+  border: 2px solid color-mix(in srgb, var(--brand-primary) 35%, #fff 65%) !important;
+  background: color-mix(in srgb, var(--brand-primary) 6%, #fff 94%);
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: none; /* look propre, bordure bien lisible */
+}
+
+/* Centrage horizontal + wrap s'il manque de place */
+.info-card--center,
+.info-card--center .mat-mdc-card-content,
+.info-card--center mat-card-content,
+.info-card--center .info-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  text-align: center;
+  margin: 0;
+}
+
+/* Fallback si color-mix non supporté */
+@supports not (color: color-mix(in srgb, #000, #fff)) {
+  .info-card {
+    border-color: #e8b9cc;   /* rose clair */
+    background: #fff6fa;     /* très léger rose */
+  }
+}
+
+/* 2 colonnes équilibrées comme dans la capture */
+.row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Ligne “Ajout de produit” : Désignation plus large + bouton à droite */
+.row-add-line {
+  display: grid;
+  grid-template-columns: 1.6fr 0.8fr 0.8fr 0.8fr auto; /* ≈ 45% / 18% / 18% / 18% / bouton */
+  gap: 10px;
+  align-items: end;
+}
+
+.row-add-line .action-btn {
+  height: 40px;
+  align-self: end;
+  white-space: nowrap;
+}
+
+/* Ligne “Ajout de produit” : tout sur une seule ligne */
+.product-row{
+  display: grid;
+  grid-template-columns:
+    minmax(260px, 1.8fr)  /* Désignation */
+    130px                  /* Prix Unit. */
+    110px                  /* Quantité */
+    140px                  /* Total */
+    auto;                  /* Bouton */
+  gap: 10px;
+  align-items: end;
+}
+
+/* Largeurs utilitaires pour compacter les champs */
+.product-row .field--xl { width: 100%; }
+.product-row .field--sm { width: 100%; max-width: 160px; }
+.product-row .field--xs { width: 100%; max-width: 120px; }
+
+/* Bouton compact aligné */
+.product-row .add-btn{
+  height: 40px;
+  white-space: nowrap;
+  align-self: end;
+}
+
+/* BLOC avec bordure rose clair (tu l’as déjà via .list-box) — renfort visuel léger */
+.list-box--compact{
+  border: 2px solid color-mix(in srgb, var(--brand-primary) 45%, #fff 55%);
+  border-radius: 6px;
+}
+.list-box--compact .list-header{
+  border-bottom: 2px solid color-mix(in srgb, var(--brand-primary) 45%, #000 55%);
+}
+
+/* Réactivité : passe sous 5 colonnes si l’espace manque */
+@media (max-width: 980px){
+  .product-row{
+    grid-template-columns:
+      1fr 120px 100px 120px auto;
+  }
+}
+@media (max-width: 760px){
+  .product-row{
+    grid-template-columns: 1fr 1fr;
+  }
+  .product-row .add-btn{ justify-self: start; }
+}
+
+/* Ligne à 2 colonnes 70% / 30% */
+.row-70-30{
+  display: grid;
+  grid-template-columns: 70% 30%;
+  gap: 12px;
+  align-items: end;
+}
+
+/* Empiler en 1 colonne sur écrans étroits */
+@media (max-width: 900px){
+  .row-70-30{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ====== Ligne d'ajout compacte et alignée ====== */
+.product-row--tight{
+  display:flex; align-items:flex-end; gap:10px; flex-wrap:nowrap;
+  border-color: transparent !important;
+  border-radius:8px; padding:10px;
+  /* variables de taille uniformes */
+  --ui-compact-w: 120px;   /* largeur des petits champs + bouton */
+  --ui-compact-h: 40px;    /* hauteur des champs + bouton */
+}
+
+/* champs : aucune marge basse supplémentaire */
+.product-row--tight .product-field{ margin:0; }
+
+/* Désignation (large) */
+.product-row--tight .product-field.designation{
+  flex:1 1 auto; min-width:220px;
+}
+
+/* Petits champs : même largeur que le bouton */
+.product-row--tight .product-field.short{
+  flex:0 0 var(--ui-compact-w);
+  width:var(--ui-compact-w); max-width:var(--ui-compact-w);
+}
+
+/* Hauteur compacte (MD Outlined) */
+.product-row--tight .mdc-text-field--outlined{
+  height:var(--ui-compact-h);
+}
+.product-row--tight .mat-mdc-form-field-infix{
+  padding:6px 0 8px;   /* compacter la zone de saisie */
+}
+
+/* Bouton “Ajouter” exactement même taille */
+.product-row--tight .add-btn{
+  width:var(--ui-compact-w);
+  height:var(--ui-compact-h);
+  align-self:end;
+  display:flex; align-items:center; justify-content:center;
+  white-space:nowrap; padding:0 12px;
+}
+
+/* (optionnel) Très étroit : passe à 2 lignes proprement */
+@media (max-width: 900px){
+  .product-row--tight{ flex-wrap:wrap; }
+  .product-row--tight .add-btn{ width:160px; } /* un peu plus large en mobile */
+}
+
+.list-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px;
+  border-bottom:2px solid var(--brand-primary);
+}
+.list-title{ margin:.25rem 0; font-weight:600; font-size:1.1rem; }
+.list-actions{
+  margin-left:auto;            /* pousse les boutons à droite */
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+
+/* Mise en page des 3 lignes (global, scoped par .facture-edit) */
+.facture-edit .row {
+  display: grid;
+  gap: 16px;
+  align-items: start;
+}
+
+.facture-edit .cols-70-30 { grid-template-columns: 70% 30%; }
+.facture-edit .cols-50-50 { grid-template-columns: 1fr 1fr; } /* 50/50 */
+
+.facture-edit .row .w-full,
+.facture-edit .row .mat-form-field {
+  width: 100%;
+}
+
+/* Responsive : on empile en mobile */
+@media (max-width: 768px) {
+  .facture-edit .cols-70-30,
+  .facture-edit .cols-50-50 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.facture-edit .form-grid > .row { display: grid !important; }
+/* Réduit uniquement l’écart HORIZONTAL entre les 2 colonnes */
+.facture-edit .row {
+  column-gap: 8px;
+  row-gap: 12px;
+}
+
+/* Optionnel : élimine toute marge par défaut sur les champs */
+.facture-edit .row .mat-mdc-form-field {
+  margin: 0;
+}
+.facture-edit .row.grid-50-50 { column-gap: 6px; }
+
+/*
+!* === PATCH: états hover/active plus foncés pour les boutons primaires === *!
+
+!* 1) Définir deux déclinaisons du rose pour les états *!
+:root {
+  --brand-primary-hover: color-mix(in srgb, var(--brand-primary) 88%, #000 12%);
+  --brand-primary-pressed: color-mix(in srgb, var(--brand-primary) 78%, #000 22%);
+}
+*/
+
+/* === PATCH: MatChips en rose brand (filled + outlined) ===================== */
+
+/* Vars d’états déjà utilisées pour les boutons (si absentes, on les redéfinit vite) */
+:root {
+  --brand-primary-hover:   var(--brand-primary-hover,   color-mix(in srgb, var(--brand-primary) 88%, #000 12%));
+  --brand-primary-pressed: var(--brand-primary-pressed, color-mix(in srgb, var(--brand-primary) 78%, #000 22%));
+}
+
+/* ===== Filled chips : color="primary" ===================================== */
+.mat-mdc-chip.mat-primary {
+  /* Tokens MDC (si pris en compte par ton build) */
+  --mdc-chip-elevated-container-color: var(--brand-primary);
+  --mdc-chip-label-text-color: #fff;
+  --mdc-chip-with-icon-icon-color: #fff;
+
+  /* Style direct pour garantir le rendu */
+  background-color: var(--brand-primary) !important;
+  color: #fff !important;
+  border: none;
+}
+
+.mat-mdc-chip.mat-primary:hover {
+  background-color: var(--brand-primary-hover) !important;
+  color: #fff !important;
+}
+
+.mat-mdc-chip.mat-primary:active,
+.mat-mdc-chip.mat-primary.mdc-evolution-chip--selected {
+  background-color: var(--brand-primary-pressed) !important;
+  color: #fff !important;
+}
+
+/* Icône “remove” / trailing action en blanc pour le contraste */
+.mat-mdc-chip.mat-primary .mat-icon,
+.mat-mdc-chip.mat-primary .mdc-evolution-chip__icon,
+.mat-mdc-chip.mat-primary .mdc-evolution-chip__icon--trailing {
+  color: #fff !important;
+  fill: currentColor;
+}
+
+/* ===== Outlined chips : appearance outlined + color="primary" ============== */
+/* Couvrir les deux variantes de classes Angular/MDC */
+.mat-mdc-chip.mat-primary.mat-mdc-chip-outlined,
+.mat-mdc-chip.mat-primary.mdc-evolution-chip--outlined {
+  --mdc-chip-outline-color: color-mix(in srgb, var(--brand-primary) 70%, #000 30%);
+  --mdc-chip-label-text-color: color-mix(in srgb, var(--brand-primary) 92%, #000 8%);
+
+  background-color: transparent !important;
+  color: color-mix(in srgb, var(--brand-primary) 92%, #000 8%) !important;
+  border: 1.5px solid color-mix(in srgb, var(--brand-primary) 70%, #000 30%) !important;
+}
+
+.mat-mdc-chip.mat-primary.mat-mdc-chip-outlined:hover,
+.mat-mdc-chip.mat-primary.mdc-evolution-chip--outlined:hover {
+  background-color: color-mix(in srgb, var(--brand-primary) 10%, #fff 90%) !important;
+  border-color: color-mix(in srgb, var(--brand-primary) 78%, #000 22%) !important;
+  color: color-mix(in srgb, var(--brand-primary) 96%, #000 4%) !important;
+}
+
+.mat-mdc-chip.mat-primary.mat-mdc-chip-outlined:active,
+.mat-mdc-chip.mat-primary.mdc-evolution-chip--outlined:active,
+.mat-mdc-chip.mat-primary.mat-mdc-chip-outlined.mdc-evolution-chip--selected,
+.mat-mdc-chip.mat-primary.mdc-evolution-chip--outlined.mdc-evolution-chip--selected {
+  background-color: color-mix(in srgb, var(--brand-primary) 16%, #fff 84%) !important;
+  border-color: color-mix(in srgb, var(--brand-primary) 85%, #000 15%) !important;
+}
+
+/* ===== Focus visible & states communs ====================================== */
+.mat-mdc-chip.mat-primary:focus-visible,
+.mat-mdc-chip.mat-primary .mdc-evolution-chip__action--primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%) !important;
+  border-radius: 999px;
+}
+
+/* Désactivé */
+.mat-mdc-chip.mdc-evolution-chip--disabled {
+  opacity: .55;
+  filter: grayscale(.1);
+}
+
+/* ChipSet spacing léger (optionnel) */
+.mat-mdc-chip-set {
+  gap: 6px;
+}
+
+
+/* === PATCH: MatBadge en rose brand ======================================== */
+:root {
+  --brand-primary-hover:   var(--brand-primary-hover,   color-mix(in srgb, var(--brand-primary) 88%, #000 12%));
+  --brand-primary-pressed: var(--brand-primary-pressed, color-mix(in srgb, var(--brand-primary) 78%, #000 22%));
+}
+
+/* Contenu du badge */
+.mat-badge .mat-badge-content {
+  background: var(--brand-primary) !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.18);
+}
+
+.mat-badge.mat-badge-overlap .mat-badge-content {
+  box-shadow: 0 0 0 2px #fff, 0 1px 2px rgba(0,0,0,.18);
+}
+.mat-badge.mat-badge-small .mat-badge-content {
+  min-width: 16px; height: 16px; line-height: 16px;
+}
+.mat-badge.mat-badge-large .mat-badge-content {
+  min-width: 22px; height: 22px; line-height: 22px;
+}
+
+button.mat-badge .mat-badge-content,
+a.mat-badge .mat-badge-content,
+[role="button"].mat-badge .mat-badge-content {
+  transition: background-color .15s ease, transform .08s ease;
+}
+button.mat-badge:hover .mat-badge-content,
+a.mat-badge:hover .mat-badge-content,
+[role="button"].mat-badge:hover .mat-badge-content {
+  background: var(--brand-primary-hover) !important;
+}
+button.mat-badge:active .mat-badge-content,
+a.mat-badge:active .mat-badge-content,
+[role="button"].mat-badge:active .mat-badge-content {
+  background: var(--brand-primary-pressed) !important;
+  transform: translateY(0.5px) scale(0.98);
+}
+
+.mat-badge.mat-badge-warn .mat-badge-content {
+  background: var(--brand-primary) !important;
+  color: #fff !important;
+}
+
+.mat-badge:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 6px;
+}
+
+.mat-badge-outline .mat-badge-content {
+  background: #fff !important;
+  color: var(--brand-primary) !important;
+  border: 2px solid var(--brand-primary) !important;
+  box-shadow: none;
+}
+
+
+/* === PATCH: Slide-Toggle (MatSlideToggle) en rose brand ==================== */
+.mat-mdc-slide-toggle.mat-primary {
+  --mdc-switch-selected-track-color: color-mix(in srgb, var(--brand-primary) 32%, #fff 68%);
+  --mdc-switch-selected-handle-color: #fff;
+  --mdc-switch-selected-hover-state-layer-color: var(--brand-primary);
+  --mdc-switch-selected-pressed-state-layer-color: var(--brand-primary);
+  --mdc-switch-selected-focus-state-layer-color: var(--brand-primary);
+
+  .mdc-switch.mdc-switch--selected .mdc-switch__track {
+    background-color: color-mix(in srgb, var(--brand-primary) 32%, #fff 68%) !important;
+    opacity: 1 !important;
+  }
+  .mdc-switch.mdc-switch--selected .mdc-switch__handle-track,
+  .mdc-switch.mdc-switch--selected .mdc-switch__handle {
+    background-color: #fff !important;
+    border-color: #fff !important;
+  }
+}
+
+.mat-mdc-slide-toggle.mat-primary:hover .mdc-switch.mdc-switch--selected .mdc-switch__track {
+  background-color: color-mix(in srgb, var(--brand-primary-hover) 28%, #fff 72%) !important;
+}
+.mat-mdc-slide-toggle.mat-primary:active .mdc-switch.mdc-switch--selected .mdc-switch__track {
+  background-color: color-mix(in srgb, var(--brand-primary-pressed) 28%, #fff 72%) !important;
+}
+
+.mat-mdc-slide-toggle .mdc-switch__track {
+  background-color: #e0e0e0 !important;
+  opacity: 1 !important;
+}
+.mat-mdc-slide-toggle .mdc-switch__handle {
+  background-color: #fafafa !important;
+  border-color: #fafafa !important;
+}
+
+.mat-mdc-slide-toggle.mdc-switch--disabled {
+  opacity: .5;
+}
+
+.mat-mdc-slide-toggle:focus-visible .mdc-switch__track,
+.mat-mdc-slide-toggle .mdc-switch__icons {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 999px;
+}
+
+
+/* === PATCH: Progress Bar (MatProgressBar) en rose brand ==================== */
+.mat-mdc-progress-bar.mat-primary {
+  --mdc-linear-progress-active-indicator-color: var(--brand-primary);
+  --mdc-linear-progress-track-color: color-mix(in srgb, var(--brand-primary) 10%, #fff 90%);
+
+  .mdc-linear-progress__bar-inner {
+    border-color: var(--brand-primary) !important;
+  }
+  .mdc-linear-progress__buffer-bar {
+    background-color: color-mix(in srgb, var(--brand-primary) 14%, #fff 86%) !important;
+  }
+  .mdc-linear-progress__buffer-dots {
+    background-image: radial-gradient(color-mix(in srgb, var(--brand-primary) 18%, #fff 82%) 2px, transparent 2px) !important;
+  }
+}
+
+mat-progress-bar.progress--sm .mdc-linear-progress {
+  height: 4px;
+}
+
+.mat-mdc-progress-bar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 6px;
+}
+
+
+/* === PATCH: Progress Spinner (MatProgressSpinner) en rose brand ============ */
+.mat-mdc-progress-spinner.mat-primary,
+.mat-mdc-progress-spinner.mat-accent {
+  --mdc-circular-progress-active-indicator-color: var(--brand-primary);
+
+  .mdc-circular-progress__indeterminate-circle-graphic,
+  .mdc-circular-progress__determinate-circle-graphic {
+    stroke: var(--brand-primary) !important;
+  }
+}
+
+.mat-mdc-progress-spinner.spinner--soft .mdc-circular-progress__determinate-circle-graphic,
+.mat-mdc-progress-spinner.spinner--soft .mdc-circular-progress__indeterminate-circle-graphic {
+  stroke: var(--brand-primary) !important;
+}
+.mat-mdc-progress-spinner.spinner--soft .mdc-circular-progress__track {
+  stroke: color-mix(in srgb, var(--brand-primary) 10%, #fff 90%) !important;
+}
+
+.mat-mdc-progress-spinner.size-20 { width: 20px !important; height: 20px !important; }
+.mat-mdc-progress-spinner.size-28 { width: 28px !important; height: 28px !important; }
+.mat-mdc-progress-spinner.size-36 { width: 36px !important; height: 36px !important; }
+
+.mat-mdc-progress-spinner:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 999px;
+}
+
+
+/* ========================================================================== */
+/*  MAT TABS (primary)                                                        */
+/* ========================================================================== */
+
+.mat-mdc-tab-group.mat-primary,
+.mat-mdc-tab-nav-bar.mat-primary {
+  --mdc-tab-indicator-active-indicator-color: var(--brand-primary);
+  --mdc-tab-text-label-color: color-mix(in srgb, var(--brand-primary) 50%, #000 50%);
+  --mdc-tab-text-label-color-active: var(--brand-primary);
+}
+
+.mat-mdc-tab-group .mdc-tab-indicator__content--underline,
+.mat-mdc-tab-nav-bar .mdc-tab-indicator__content--underline {
+  border-color: var(--brand-primary) !important;
+}
+
+.mat-mdc-tab.mdc-tab--active .mdc-tab__text-label,
+.mat-mdc-tab.mdc-tab--active .mat-icon {
+  color: var(--brand-primary) !important;
+  font-weight: 600;
+}
+
+.mat-mdc-tab .mdc-tab__ripple::before,
+.mat-mdc-tab .mdc-tab__ripple::after { background: transparent !important; }
+.mat-mdc-tab:hover .mdc-tab__text-label,
+.mat-mdc-tab:hover .mat-icon {
+  color: color-mix(in srgb, var(--brand-primary) 80%, #000 20%) !important;
+}
+.mat-mdc-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 8px;
+}
+
+.mat-tabs--softbar {
+  background: color-mix(in srgb, var(--brand-primary) 6%, #fff 94%);
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 20%, #fff 80%);
+}
+
+
+/* ========================================================================== */
+/*  MAT TOOLTIP                                                               */
+/* ========================================================================== */
+.mat-mdc-tooltip .mdc-tooltip__surface {
+  background: color-mix(in srgb, var(--brand-primary) 92%, #000 8%) !important;
+  color: #fff !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 70%, #000 30%);
+  box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  font-weight: 500;
+}
+
+.mdc-tooltip__caret-surface {
+  background: color-mix(in srgb, var(--brand-primary) 92%, #000 8%) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 70%, #000 30%) !important;
+}
+
+.tooltip--soft .mdc-tooltip__surface {
+  background: color-mix(in srgb, var(--brand-primary) 14%, #fff 86%) !important;
+  color: color-mix(in srgb, #000 80%, var(--brand-primary) 20%) !important;
+  border-color: color-mix(in srgb, var(--brand-primary) 30%, #fff 70%) !important;
+}
+
+
+/* ========================================================================== */
+/*  MAT SNACK-BAR                                                             */
+/* ========================================================================== */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: color-mix(in srgb, var(--brand-primary) 92%, #000 8%);
+  --mdc-snackbar-supporting-text-color: #fff;
+  --mdc-snackbar-container-shape: 10px;
+
+  background: var(--mdc-snackbar-container-color) !important;
+  color: var(--mdc-snackbar-supporting-text-color) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 70%, #000 30%);
+  box-shadow: 0 8px 22px rgba(0,0,0,.22);
+  padding-right: 8px;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mdc-button,
+.mat-mdc-snack-bar-container .mat-mdc-button {
+  --mdc-text-button-label-text-color: #fff;
+  color: #fff !important;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+.mat-mdc-snack-bar-container .mat-mdc-button:hover {
+  background: color-mix(in srgb, #fff 12%, var(--brand-primary) 88%) !important;
+}
+.mat-mdc-snack-bar-container .mat-mdc-button:active {
+  background: color-mix(in srgb, #fff 18%, var(--brand-primary) 82%) !important;
+}
+
+.snack--soft .mat-mdc-snack-bar-container {
+  background: color-mix(in srgb, var(--brand-primary) 14%, #fff 86%) !important;
+  color: color-mix(in srgb, #000 85%, var(--brand-primary) 15%) !important;
+  border-color: color-mix(in srgb, var(--brand-primary) 28%, #fff 72%) !important;
+}
+.snack--outline .mat-mdc-snack-bar-container {
+  background: #fff !important;
+  color: color-mix(in srgb, #000 80%, var(--brand-primary) 20%) !important;
+  border: 2px solid var(--brand-primary) !important;
+  box-shadow: none;
+}
+
+.mat-mdc-snack-bar-container .mat-icon {
+  color: #fff !important;
+  opacity: .9;
+}
+.mat-mdc-snack-bar-container .mat-icon:hover { opacity: 1; }
+
+.mat-mdc-snack-bar-container:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 10px;
+}
+
+
+/* ========================================================================== */
+/*  MAT DIALOG                                                                */
+/* ========================================================================== */
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 14px !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, #fff 78%) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,.18);
+}
+
+.dialog--brand .mdc-dialog__title,
+.dialog--brand .mat-mdc-dialog-title,
+.dialog-title-rose {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 12px 16px;
+  margin: 0;
+  border-radius: 12px 12px 0 0;
+  font-weight: 700;
+  border-bottom: 1px solid color-mix(in srgb, #000 12%, var(--brand-primary) 88%);
+}
+
+.mat-mdc-dialog-content { padding: 16px 18px !important; }
+.mat-mdc-dialog-actions {
+  padding: 10px 16px 14px !important;
+  border-top: 1px solid color-mix(in srgb, var(--brand-primary) 14%, #fff 86%);
+}
+
+.mat-mdc-dialog-actions .mat-mdc-raised-button.mat-primary,
+.mat-mdc-dialog-actions .mat-mdc-unelevated-button.mat-primary {
+  background: var(--brand-primary);
+  color: #fff;
+}
+.mat-mdc-dialog-actions .mat-mdc-raised-button.mat-primary:hover,
+.mat-mdc-dialog-actions .mat-mdc-unelevated-button.mat-primary:hover {
+  background: var(--brand-primary-hover) !important;
+}
+.mat-mdc-dialog-actions .mat-mdc-raised-button.mat-primary:active,
+.mat-mdc-dialog-actions .mat-mdc-unelevated-button.mat-primary:active {
+  background: var(--brand-primary-pressed) !important;
+}
+
+.mat-mdc-dialog-container:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 14px;
+}
+
+.dialog--outline .mdc-dialog__surface {
+  border: 2px solid var(--brand-primary) !important;
+  box-shadow: 0 8px 26px rgba(0,0,0,.16);
+}
+
+
+
+/* ========================================================================== */
+/*  MAT SELECT                                                                */
+/* ========================================================================== */
+
+/* Panel (overlay) */
+.mat-mdc-select-panel {
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, #fff 78%) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18) !important;
+  border-radius: 10px !important;
+  padding: 6px 0;
+}
+
+/* Options */
+.mat-mdc-option.mdc-list-item {
+  color: color-mix(in srgb, #000 86%, var(--brand-primary) 14%);
+}
+.mat-mdc-option.mdc-list-item:hover,
+.mat-mdc-option.mdc-list-item.mdc-list-item--hover {
+  background: color-mix(in srgb, var(--brand-primary) 10%, #fff 90%) !important;
+}
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+  background: color-mix(in srgb, var(--brand-primary) 16%, #fff 84%) !important;
+  color: color-mix(in srgb, #000 80%, var(--brand-primary) 20%) !important;
+}
+.mat-mdc-option .mat-pseudo-checkbox-checked,
+.mat-mdc-option .mat-pseudo-checkbox-indeterminate {
+  background: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+}
+
+/* Icône flèche */
+.mat-mdc-select-arrow {
+  color: color-mix(in srgb, var(--brand-primary) 75%, #000 25%);
+}
+
+/* Multiple: chips alignés au brand (si multiple=true) */
+.mat-mdc-select-value .mat-mdc-chip {
+  background: color-mix(in srgb, var(--brand-primary) 12%, #fff 88%);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 40%, #fff 60%);
+  color: color-mix(in srgb, #000 85%, var(--brand-primary) 15%);
+}
+.mat-mdc-select-value .mat-mdc-chip .mat-icon {
+  color: color-mix(in srgb, var(--brand-primary) 85%, #000 15%);
+}
+
+/* Focus visible du trigger */
+.mat-mdc-select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, #fff 75%);
+  border-radius: 8px;
+}
+
+
+/* ========================================================================== */
+/*  LIGNE COMPACTE : product-row--tight / bordures roses globales            */
+/* ========================================================================== */
+
+/* BORDURES ROSES POUR TOUS LES MAT-FORM-FIELD EN OUTLINE */
+.mat-mdc-form-field-appearance-outline .mdc-text-field--outlined {
+  --mdc-outlined-text-field-outline-color: #ff9ab3;
+  --mdc-outlined-text-field-hover-outline-color: #ff6b8e;
+  --mdc-outlined-text-field-focus-outline-color: #ff6b8e;
+}
+
+/* BORDURES ROSES GLOBAL POUR TOUS LES CHAMPS ANGULAR MATERIAL (OUTLINE) */
+
+/* Bordure “normale” (repos) */
+.mat-mdc-form-field .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: #ff9ab3 !important;   /* rose clair */
+}
+
+/* Au survol : un peu plus soutenu */
+.mat-mdc-form-field .mdc-text-field--outlined:hover .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-text-field--outlined:hover .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-text-field--outlined:hover .mdc-notched-outline__trailing {
+  border-color: #ff6b8e !important;
+}
+
+/* Au focus : rose principal bien visible */
+.mat-mdc-form-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: #ff6b8e !important;
+}
+
+
+/* ========================================================================== */
+/*  LIGNE COMPACTE : product-row--tight                                       */
+/*  (Catégorie de numéro comme Client + un peu plus long)                     */
+/* ========================================================================== */
+
+/* 1er champ de la ligne (catégorie) plus large, comme le Client */
+.product-row--tight .product-field:first-child {
+  flex: 1.4 1 auto;      /* plus large que les champs “short” */
+  min-width: 260px;
+}
+
+/* Petits champs: on garde la largeur fixe définie par --ui-compact-w */
+.product-row--tight .product-field.short {
+  flex: 0 0 var(--ui-compact-w);
+  max-width: var(--ui-compact-w);
+}
+
+/* Même hauteur que les autres champs compacts */
+.product-row--tight .product-field
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined {
+  height: var(--ui-compact-h);
+  padding-inline: 12px;
+}
+
+/* Infix compacte dans cette ligne */
+.product-row--tight .product-field .mat-mdc-form-field-infix {
+  padding: 6px 0 8px;
+}
+
+/* Label du select de la ligne compacte bien en gras (au cas où) */
+.product-row--tight .product-field .mat-mdc-floating-label {
+  font-weight: 600;
+}
+
+
+/* ========================================================================== */
+/*  BORDURES ROSES POUR TOUS LES MAT-FORM-FIELD EN OUTLINE                    */
+/*  (inputs, textarea, mat-select, y compris Ajout de produit)                */
+/* ========================================================================== */
+
+/* via variables MDC */
+.mat-mdc-form-field-appearance-outline .mdc-text-field--outlined {
+  /* couleur de bordure "normale" */
+  --mdc-outlined-text-field-outline-color: #ff9ab3;
+  /* au survol */
+  --mdc-outlined-text-field-hover-outline-color: #ff6b8e;
+  /* au focus */
+  --mdc-outlined-text-field-focus-outline-color: #ff6b8e;
+}
+
+/* sécurité : on force aussi directement la bordure actuelle */
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined
+.mdc-notched-outline__leading,
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined
+.mdc-notched-outline__notch,
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined
+.mdc-notched-outline__trailing {
+  border-color: #ff9ab3 !important;
+}
+
+/* Au survol : un peu plus soutenu */
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined:hover
+.mdc-notched-outline__leading,
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined:hover
+.mdc-notched-outline__notch,
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined:hover
+.mdc-notched-outline__trailing {
+  border-color: #ff6b8e !important;
+}
+
+/* Au focus : rose principal bien visible */
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined.mdc-text-field--focused
+.mdc-notched-outline__leading,
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined.mdc-text-field--focused
+.mdc-notched-outline__notch,
+.mat-mdc-form-field-appearance-outline
+.mdc-text-field--outlined.mdc-text-field--focused
+.mdc-notched-outline__trailing {
+  border-color: #ff6b8e !important;
+}
+
+
+
+/* ========================================================================== */
+/*  STYLE UNIFIÉ POUR mat-form-field appearance="outline"                     */
+/*  - mêmes bordures pour input / textarea / select                           */
+/*  - pas de petit "tiret" à gauche                                           */
+/*  - labels en gras                                                          */
+/* ========================================================================== */
+
+/* On neutralise la bordure Material "notched" partout (couleur transparente) */
+.mat-mdc-form-field-appearance-outline .mdc-text-field--outlined {
+  --mdc-outlined-text-field-outline-color: transparent !important;
+  --mdc-outlined-text-field-hover-outline-color: transparent !important;
+  --mdc-outlined-text-field-focus-outline-color: transparent !important;
+}
+
+/* On laisse le notch exister (pour que le label fonctionne),
+   mais on ne voit plus sa bordure */
+.mat-mdc-form-field-appearance-outline .mdc-notched-outline,
+.mat-mdc-form-field-appearance-outline .mdc-notched-outline__leading,
+.mat-mdc-form-field-appearance-outline .mdc-notched-outline__notch,
+.mat-mdc-form-field-appearance-outline .mdc-notched-outline__trailing {
+  border-color: transparent !important;
+  border: 0 !important;
+}
+
+/* Cadre simple pour TOUS les champs outlined (input, textarea, select…) */
+.mat-mdc-form-field-appearance-outline
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding-inline: 12px;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+
+/* Cadre rose vif au focus */
+.mat-mdc-form-field-appearance-outline
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined.mdc-text-field--focused {
+  border-color: var(--brand-primary) !important;
+}
+
+/* Labels en gras pour tous les champs outline (input, textarea, select…) */
+.mat-mdc-form-field-appearance-outline .mat-mdc-floating-label,
+.mat-mdc-form-field-appearance-outline .mdc-floating-label {
+  font-weight: 600 !important;
+}
+
+
+/* ===================================================== */
+/*  SUPPRIMER LE "TIRET GAUCHE" DANS product-row--tight  */
+/*  (mat-select + inputs de cette ligne)                 */
+/* ===================================================== */
+
+.product-row--tight .mdc-text-field--outlined .mdc-notched-outline__leading,
+.product-row--tight .mdc-text-field--outlined .mdc-notched-outline__notch,
+.product-row--tight .mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: transparent !important;   /* plus aucun morceau d’outline MDC */
+  border: 0 !important;
+}
+
+/* on garde ton cadre externe rose, déjà défini par ailleurs */
+.product-row--tight
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding-inline: 12px;
+  background-color: #fff;
+}
+
+.product-row--tight
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined.mdc-text-field--focused {
+  border-color: var(--brand-primary) !important;
+}
+
+
+/* ===================================================== */
+/*  MAT-SELECT dans product-row--tight                   */
+/*  - même look que les inputs                           */
+/*  - plus de tiret gauche                               */
+/*  - label en gras                                      */
+/* ===================================================== */
+
+.product-row--tight .mat-mdc-form-field-type-mat-select.product-field {
+  flex: 1.6 1 auto;
+  min-width: 260px;
+}
+
+/* On coupe l’outline MDC pour ces mat-select */
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mdc-notched-outline,
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mdc-notched-outline__leading,
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mdc-notched-outline__notch,
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mdc-notched-outline__trailing {
+  border: 0 !important;
+}
+
+/* Cadre simple autour du mat-select */
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined {
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding-inline: 12px;
+  background-color: #fff;
+}
+
+/* Cadre rose quand le mat-select est focus */
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined.mdc-text-field--focused {
+  border-color: var(--brand-primary) !important;
+}
+
+/* Label du mat-select en gras */
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mat-mdc-floating-label,
+.product-row--tight .mat-mdc-form-field-type-mat-select
+.mdc-floating-label {
+  font-weight: 600 !important;
+}
+
+.list-actions{
+  margin-left:auto;            /* pousse les boutons à droite */
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+
+/* Si form-grid utilise déjà display:grid ailleurs, on neutralise pour nos lignes */
+.form-grid { display: block; }
+
+/* Lignes flex */
+.row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Colonnes */
+.col { flex: 1 1 0; min-width: 0; }
+.col-70 { flex-basis: 70%; max-width: 70%; }
+.col-30 { flex-basis: 30%; max-width: 30%; }
+.col-80 { flex-basis: 80%; max-width: 80%; }
+.col-20 { flex-basis: 20%; max-width: 20%; }
+
+/* Les mat-form-field doivent occuper toute la colonne */
+.full { width: 100%; display: block; }
+.mat-form-field.full { width: 100%; }
+
+/* Responsive: empile en mobile */
+@media (max-width: 900px) {
+  .row { flex-direction: column; }
+  .col-70, .col-30 { flex-basis: 100%; max-width: 100%; }
+}
+
+
+
+/* Le contenu ne dépasse jamais la boîte du dialog */
+.dialog-body {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: 1fr; /* 1 colonne, pleine largeur */
+  gap: 16px;
+}
+
+/* Champs plus hauts mais largeur 100% */
+.w-full { width: 100%; }
+
+.field-xl .mat-mdc-text-field-wrapper {
+  min-height: 56px; /* confort visuel, sans élargir la boîte */
+}
+
+.field-xl .mat-mdc-form-field-infix {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* Boutons du bas : pas de dépassement */
+.dialog-actions {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+/* Empêche tout débordement horizontal (sélects, labels longs) */
+:host ::ng-deep .mat-mdc-select-panel,
+:host ::ng-deep .mdc-menu-surface--open {
+  max-width: calc(100vw - 48px);
+}
+
+/*
+tableau encaissement direct sans factures
+ */
+/* ===== Table produits – version compacte et sans conflits ===== */
+
+/* Table et conteneur */
+.products-table { width: 100%; min-width: 0; table-layout: fixed; }
+.compact-table  { overflow-x: auto; }
+
+/* Hauteur compacte par défaut */
+.compact-table .mat-mdc-text-field-wrapper { min-height: 36px; }
+.compact-table .mat-mdc-form-field-infix  { padding: 4px 8px; }
+
+/* --- Largeurs colonnes “textuelles” --- */
+.products-table .mat-column-produit     { width: 20%; }
+.products-table .mat-column-designation { width: 26%; }
+.products-table .mat-column-marque      { width: 9%;  }
+.products-table .mat-column-modele      { width: 9%;  }
+.products-table .mat-column-zone        { width: 14%; }
+
+/* --- Colonnes compactes: Qté / PU / Total (≈ moitié de ce que tu avais) --- */
+.products-table .mat-column-quantite      { width: 36px;  min-width: 36px; }
+.products-table .mat-column-prix_unitaire { width: 60px;  min-width: 60px; }
+.products-table .mat-column-total         { width: 60px;  min-width: 60px; }
+
+/* Empêche mat-form-field de s’étirer dans ces colonnes */
+.products-table .mat-column-quantite      .fit,
+.products-table .mat-column-prix_unitaire .fit,
+.products-table .mat-column-total         .fit {
+  width: 100% !important;          /* l’input remplit la petite cellule */
+  max-width: 100% !important;
+}
+
+/* Infix compact (réduit la “boîte” interne) */
+.products-table .mat-column-quantite      .fit .mat-mdc-form-field-infix,
+.products-table .mat-column-prix_unitaire .fit .mat-mdc-form-field-infix,
+.products-table .mat-column-total         .fit .mat-mdc-form-field-infix {
+  padding: 2px 6px;
+  min-width: 0;
+}
+
+/* Hauteur et alignement compacts */
+.fit .mat-mdc-text-field-wrapper { height: 28px; }
+.fit input[matInput]             { text-align: right; }
+
+/* Colonne actions fixe et visible */
+.products-table .mat-column-actions {
+  width: 56px; min-width: 56px; max-width: 56px;
+  text-align: center; overflow: visible;
+}
+
+/* Aligne les numériques */
+.products-table .mat-column-quantite input,
+.products-table .mat-column-prix_unitaire input,
+.products-table .mat-column-total input { text-align: right; }
+
+/* (Facultatif) retire les flèches number */
+.fit input[type=number]::-webkit-outer-spin-button,
+.fit input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.fit input[type=number] { -moz-appearance: textfield; }
+
+
+/* ===== Ultra-compact: Qté / PU / Total (≈ moitié de la version précédente) ===== */
+
+/* colonnes très étroites */
+.products-table .mat-column-quantite      { width: 28px;  min-width: 28px;  }
+.products-table .mat-column-prix_unitaire { width: 48px;  min-width: 48px;  }
+.products-table .mat-column-total         { width: 48px;  min-width: 48px;  }
+
+/* le mat-form-field ne s'étire pas et reste riquiqui */
+.products-table .mat-column-quantite .fit,
+.products-table .mat-column-prix_unitaire .fit,
+.products-table .mat-column-total .fit {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* réduit la “boîte” interne au maximum */
+.products-table .mat-column-quantite .fit .mat-mdc-form-field-infix,
+.products-table .mat-column-prix_unitaire .fit .mat-mdc-form-field-infix,
+.products-table .mat-column-total .fit .mat-mdc-form-field-infix {
+  padding: 0 4px;          /* moins de padding */
+  min-height: 22px;        /* plus bas */
+}
+
+/* wrapper encore plus bas */
+.fit .mat-mdc-text-field-wrapper { height: 22px; }
+
+/* input minuscule et aligné à droite */
+.fit input[matInput] {
+  font-size: 12px;
+  line-height: 20px;
+  padding: 0;
+  text-align: right;
+}
+
+/* retire les zones d’aide/erreurs sous le champ pour gagner de la hauteur */
+.fit .mat-mdc-form-field-subscript-wrapper { display: none; }
+
+/* garde la colonne actions visible et fixe */
+.products-table .mat-column-actions {
+  width: 56px; min-width: 56px; max-width: 56px;
+  text-align: center;
+}
+
+/* table */
+.products-table { width:100%; table-layout: fixed; }
+.compact-table  { overflow-x: auto; }
+
+
+/* client dashboard */
+
+/* === Filtres spécifiques au dashboard clients === */
+
+/* Conteneur des filtres */
+.filters-client-dashboard {
+  margin-bottom: 1rem;
+}
+
+/* Grille : gros champ client + 2 petits boutons */
+.filters-client-dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) auto auto; // le champ prend tout l'espace
+  column-gap: 0.75rem;
+  align-items: center;
+}
+
+/* Le mat-form-field du client s'étire au max */
+.client-field {
+  width: 100%;
+}
+
+/* Les boutons restent compacts */
+.action-btn {
+  justify-self: start;
+}
+
+
+
+/* Totaux (2 lignes, alignés à droite) */
+.solde-global { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin-top: 10px; font-weight: bold; }
+.solde-l1 { display: inline-flex; justify-content: flex-end; align-items: center; gap: 24px; flex-wrap: wrap; text-align: right; }
+.solde-l2 { display: inline-flex; justify-content: flex-end; align-items: center; text-align: right; }
+.solde-global .pair { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.solde-global .val { font-weight: 600; }
+
+/* noir gras pour les titres des mat-tab */
+/* Alignement déjà défini */
+.pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* Icônes dans les labels d'onglets */
+.mat-mdc-tab .pair mat-icon {
+  font-size: 18px;          /* un peu plus petit que le 24px par défaut */
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+
+  /* couleur icône onglet normal */
+  color: var(--brand-primary, #ad1457);  /* fallback rose ARCEP si var non définie */
+}
+
+/* Texte des labels (onglet normal) */
+.mat-mdc-tab .pair span {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Onglet actif : on renforce légèrement */
+.mat-mdc-tab.mdc-tab--active .pair mat-icon {
+  color: var(--brand-primary-strong, #d81b60); /* un rose un peu plus vif si tu as cette var */
+}
+
+.mat-mdc-tab.mdc-tab--active .pair span {
+  font-weight: 600;
+}
+
+
+/*
+dashboard resumé client
+ */
+
+/* Conteneur 2 colonnes */
+.client-summary {
+  display: flex;
+  gap: 2rem;
+  align-items: stretch;
+  margin-bottom: 1.5rem;
+}
+
+/* Chaque colonne prend 50% */
+.client-summary__col {
+  flex: 1 1 0;
+}
+
+/* Colonne gauche : texte client */
+.client-summary__col--info {
+  flex: 0 0 50%;
+  max-width: 50%;
+  display: flex;
+  align-items: flex-start;
+}
+
+.client-info {
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.client-info-row {
+  margin-bottom: 0.25rem;
+}
+
+.client-info-label {
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+
+.client-info-value {
+  font-weight: 400;
+}
+
+/* Colonne droite : centrage du bloc d’actions */
+.client-summary__col--actions {
+  flex: 0 0 50%;
+  max-width: 50%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-right: 1.5rem;  /* ⬅ espace à droite pour respirer */
+}
+
+.client-kpi-card {
+  background: #ffc107;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  text-align: center;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.client-kpi-main {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.client-kpi-label {
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+/* Responsive : en dessous d’une certaine largeur, les 2 colonnes passent en vertical */
+@media (max-width: 960px) {
+  .client-summary {
+    flex-direction: column;
+  }
+
+  .client-summary__col--actions {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  .client-actions {
+    justify-content: flex-start;
+  }
+}
+
+
+/* Titre "Client : ..." en gras noir */
+.client-header .mat-card-title,
+.client-header .mat-mdc-card-title,   /* pour la nouvelle version Material */
+.client-header .title-row .label,
+.client-header .title-row .value {
+  font-weight: 700;   /* gras */
+  color: #000000;     /* noir */
+}
+
+
+.client-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));  /* 2 colonnes */
+  gap: 0.75rem 1rem;
+  width: 100%;
+  max-width: 100%;                                   /* utilise toute la zone d'actions */
+  justify-content: flex-start;                       /* inutile mais explicite */
+}
+
+/* Les boutons prennent toute la largeur de leur cellule */
+.client-actions button[mat-flat-button] {
+  width: 100%;
+  justify-content: flex-start;  /* texte + icône alignés à gauche */
+}
+
+
+.client-info--two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* 2 colonnes égales */
+  column-gap: 2rem;
+}
+
+.client-info-col {
+  flex: 1 1 0;
+}
+
+/* Mobile : repasser en 1 seule colonne */
+@media (max-width: 768px) {
+  .client-info--two-cols {
+    flex-direction: column;
+  }
+}
+
+.category-tabs {
+  margin-bottom: 0.75rem;
+}

@@ -1,0 +1,323 @@
+<!-- src/app/facture/frequences/frequences-crud/frequences-crud.component.html -->
+
+<div class="page-title">
+  <h2>Fiche technique : fréquences</h2>
+</div>
+
+<!--<div *ngIf="loading">Chargement...</div>
+<div *ngIf="errorMsg" class="text-red-600">{{ errorMsg }}</div>-->
+<div class="blank-row"></div>
+
+<section class="list-box">
+
+  <!-- 🔹 AJOUT de list-body pour ne plus “couper” le cadre -->
+  <div class="list-body">
+
+    <mat-horizontal-stepper [linear]="isLinear" *ngIf="form">
+
+      <!-- STEP 1 : Fiche technique -->
+      <mat-step [stepControl]="ficheFG" label="1. Fiche technique">
+
+        <form [formGroup]="ficheFG" class="form-grid">
+
+          <div class="blank-row"></div>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Client</mat-label>
+            <mat-select formControlName="client" matTooltip="Client">
+              <mat-option *ngFor="let item of clients" (click)="onGetClient(item)" [value]="item.id">
+                {{ item?.denomination_sociale }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="blank-row"></div>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Catégorie de service</mat-label>
+            <mat-select
+              formControlName="categorie_produit"
+              matTooltip="Catégorie de service">
+              <mat-option *ngFor="let item of categoriesFiltered" [value]="item.id">
+                {{ item.libelle }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="blank-row"></div>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Objet</mat-label>
+            <input matInput formControlName="objet">
+          </mat-form-field>
+
+          <div class="blank-row"></div>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Commentaire</mat-label>
+            <textarea matInput rows="2" formControlName="commentaire"></textarea>
+          </mat-form-field>
+
+        </form>
+
+        <div class="flex justify-end gap-2 mt-3">
+          <button
+            mat-stroked-button
+            matStepperNext
+            [disabled]="!isFicheValid()"
+            (click)="onFicheStepValidated()">
+            Continuer
+          </button>
+        </div>
+
+      </mat-step>
+
+      <!-- STEP 2 : Stations (TABLE + MODALE) -->
+      <ng-container *ngIf="showStationsStep">
+        <mat-step [completed]="isStationsValid()" label="2. Stations">
+          <div [formGroup]="form" class="space-y-3">
+
+            <div class="flex justify-between items-center mb-2">
+              <button mat-flat-button color="primary" (click)="onOpenStationDialog()" >
+                <mat-icon>add</mat-icon>
+                Ajouter une station
+              </button>
+            </div>
+
+            <table mat-table #stationsTable [dataSource]="stationsFA.controls" class="mat-elevation-z1 w-full" formArrayName="stations">
+
+              <ng-container matColumnDef="type_station" *ngIf="cfg[cat]?.stations?.type_station?.visible">
+                <th mat-header-cell *matHeaderCellDef> Type </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.type_station }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="puissance_classe"  *ngIf="cfg[cat]?.stations?.puissance_classe?.visible">
+                <th mat-header-cell *matHeaderCellDef> Puissance </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.puissance_classe }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="nbre_station" *ngIf="cfg[cat]?.stations?.nbre_station?.visible">
+                <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.nbre_station }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="debit_classe" *ngIf="cfg[cat]?.stations?.debit_classe?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Debit </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.debit_classe }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="largeur_bande_mhz" *ngIf="cfg[cat]?.stations?.largeur_bande_mhz?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Largeur bande </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.largeur_bande_mhz }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="bande_frequence" *ngIf="cfg[cat]?.stations?.bande_frequence?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Bande frequence </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.bande_frequence }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="nbre_tranche"  *ngIf="cfg[cat]?.stations?.nbre_tranche?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Nombre tranche facturation </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.nbre_tranche }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="type_usage"  *ngIf="cfg[cat]?.stations?.type_usage?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Type usage </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.type_usage }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="localite"   *ngIf="cfg[cat]?.stations?.localite?.visible"  >
+                <th mat-header-cell *matHeaderCellDef> Localité </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.localite }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  <button mat-icon-button (click)="onOpenStationDialog(i)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="onRemoveStation(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsStations"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsStations;"></tr>
+
+            </table>
+
+            <div class="flex gap-2 justify-end mt-3">
+              <button mat-stroked-button matStepperPrevious>Retour</button>
+              <button mat-stroked-button matStepperNext>Continuer</button>
+            </div>
+          </div>
+        </mat-step>
+      </ng-container>
+
+      <!-- STEP 3 : Canaux -->
+      <ng-container *ngIf="showCanauxStep">
+        <mat-step [completed]="isCanauxValid()" label="3. Canaux">
+          <div [formGroup]="form" class="space-y-3">
+
+            <div class="flex justify-between items-center mb-2">
+              <button mat-flat-button color="primary" (click)="onOpenCanalDialog()">
+                <mat-icon>add</mat-icon>
+                Ajouter un canal
+              </button>
+            </div>
+
+            <table mat-table #canauxTable [dataSource]="canauxFA.controls" class="mat-elevation-z1 w-full" formArrayName="canaux">
+
+              <ng-container
+                matColumnDef="type_canal"  *ngIf="cfg[cat]?.canaux?.type_canal?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Type canal </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.type_canal }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="type_station" *ngIf="cfg[cat]?.canaux?.type_station?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Type </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.type_station }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="zone_couverture"  *ngIf="cfg[cat]?.canaux?.zone_couverture?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Zone </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.zone_couverture }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="nbre_tranche_facturation"  *ngIf="cfg[cat]?.canaux?.nbre_tranche_facturation?.visible">
+                <th mat-header-cell *matHeaderCellDef> Nombre tranche facturation </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.nbre_tranche_facturation }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="largeur_bande_khz"  *ngIf="cfg[cat]?.canaux?.largeur_bande_khz?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Largeur bande </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.largeur_bande_khz }}
+                </td>
+              </ng-container>
+
+              <ng-container
+                matColumnDef="bande_frequence"  *ngIf="cfg[cat]?.canaux?.bande_frequence?.visible" >
+                <th mat-header-cell *matHeaderCellDef> Bande de frequence</th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  {{ row.value.bande_frequence }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let row; let i=index">
+                  <button mat-icon-button (click)="onOpenCanalDialog(i)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="onRemoveCanal(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsCanaux"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsCanaux;"></tr>
+
+            </table>
+
+            <div class="flex gap-2 justify-end mt-3">
+              <button mat-stroked-button matStepperPrevious>Retour</button>
+              <button mat-stroked-button matStepperNext [disabled]="!isCanauxValid()">Continuer</button>
+            </div>
+          </div>
+        </mat-step>
+      </ng-container>
+
+      <!-- STEP 4 : Lignes tarifées -->
+      <ng-container *ngIf="showTarifsStep">
+        <mat-step label="4. Lignes tarifées">
+          <div class="flex gap-2 mb-3">
+            <button mat-raised-button color="primary" (click)="savePutAndRecalc()">
+              Enregistrer + recalculer
+            </button>
+            <button mat-raised-button color="accent" (click)="patchUpsert()">
+              Upsert
+            </button>
+            <button mat-stroked-button (click)="recalcOnly()">
+              Recalculer
+            </button>
+            <button mat-stroked-button (click)="onRetourListe()">
+              Retour liste
+            </button>
+          </div>
+
+          <ng-container *ngIf="lignesTarifees?.length; else noLines">
+            <table class="min-w-full border">
+              <thead>
+              <tr class="bg-gray-50">
+                <th class="px-2 py-1 text-left">Type</th>
+                <th class="px-2 py-1 text-left">Réf</th>
+                <th class="px-2 py-1 text-right">Qté</th>
+                <th class="px-2 py-1 text-right">PU</th>
+                <th class="px-2 py-1 text-right">Total</th>
+                <th class="px-2 py-1 text-left">Produit</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let l of lignesTarifees" class="border-t">
+                <td class="px-2 py-1">{{ l.type_ligne }}</td>
+                <td class="px-2 py-1">{{ l.reference }}</td>
+                <td class="px-2 py-1 text-right">{{ l.quantite }}</td>
+                <td class="px-2 py-1 text-right">{{ l.prix_unitaire | number:'1.0-2' }}</td>
+                <td class="px-2 py-1 text-right">{{ l.montant_total | number:'1.0-2' }}</td>
+                <td class="px-2 py-1">{{ l.produit_libelle }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </ng-container>
+
+          <ng-template #noLines>
+            <p>Aucune ligne tarifée pour le moment.</p>
+          </ng-template>
+        </mat-step>
+      </ng-container>
+
+    </mat-horizontal-stepper>
+
+  </div> <!-- /list-body -->
+
+</section>

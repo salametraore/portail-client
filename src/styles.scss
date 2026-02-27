@@ -1,0 +1,9 @@
+// Import Angular Material theming
+@use '@angular/material' as mat;
+
+@use 'styles/styles_arcep.scss';
+
+// Optionnel : icônes Material
+@import 'node_modules/material-icons/iconfont/material-icons.css';
+
+

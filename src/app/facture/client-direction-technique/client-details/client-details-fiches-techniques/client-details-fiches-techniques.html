@@ -1,0 +1,97 @@
+<!-- Cadre standard -->
+<section class="list-box">
+
+  <!-- En-tête : titre + actions à droite -->
+  <div class="list-header">
+
+    <div class="list-actions">
+      <!-- Actions éventuelles (bouton export, etc.) -->
+      <!--
+      <button mat-stroked-button color="primary">
+        <mat-icon>print</mat-icon>
+        Exporter
+      </button>
+      -->
+    </div>
+  </div>
+
+  <!-- Corps : table + pagination -->
+  <div class="list-body">
+
+    <div class="mat-elevation-z10 compact-table">
+      <table [dataSource]="t_FicheTechniques" mat-table matSort style="width: 100%">
+
+        <!-- id -->
+        <ng-container matColumnDef="id">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Id</th>
+          <td *matCellDef="let element" mat-cell>{{ element.id }}</td>
+        </ng-container>
+
+        <!-- Objet -->
+        <ng-container matColumnDef="objet">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Objet</th>
+          <td *matCellDef="let element" mat-cell>{{ element.objet }}</td>
+        </ng-container>
+
+        <!-- Date soumission -->
+        <ng-container matColumnDef="date_creation">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Date soumission</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ element.date_creation | date:'dd/MM/yyyy' }}
+          </td>
+        </ng-container>
+
+        <!-- Catégorie -->
+        <ng-container matColumnDef="categorie_produit">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Catégorie</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ getCategorie(element.categorie_produit) }}
+          </td>
+        </ng-container>
+
+        <!-- Statut -->
+        <ng-container matColumnDef="statut.libelle">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Statut</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ element.statut?.libelle }}
+          </td>
+        </ng-container>
+
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th *matHeaderCellDef mat-header-cell>Actions</th>
+          <td *matCellDef="let element" mat-cell>
+
+            <button [matMenuTriggerFor]="menu" color="primary" mat-icon-button>
+              <mat-icon>settings</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+
+              <button (click)="onModifierFicheTechnique(element)" class="btn_edit" mat-menu-item>
+                <mat-icon color="primary">edit</mat-icon>
+                Detail
+              </button>
+
+            </mat-menu>
+          </td>
+        </ng-container>
+
+
+        <!-- Lignes -->
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+
+      </table>
+
+      <!-- Pagination -->
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        [pageSize]="5"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+
+  </div> <!-- /list-body -->
+
+</section>

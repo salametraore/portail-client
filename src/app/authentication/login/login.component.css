@@ -1,0 +1,157 @@
+.login-container {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.background-container {
+  /* background-image: url('/assets/images/background.png');*/
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-image: var(--bg-image);
+}
+
+.content-row {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.slogan-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4rem;
+  color: white;
+}
+
+.slogan-content {
+  margin-top: auto;
+}
+
+.copyright {
+  margin-bottom: 2rem;
+}
+
+.form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 450px;
+  padding: 2rem;
+}
+
+.custom-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-container {
+  margin-bottom: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  max-width: 120px;
+  height: auto;
+}
+
+.mat-title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.mat-subtitle {
+  font-size: 1rem;
+  margin: 0.5rem 0 1rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.mat-checkbox {
+  margin-right: auto;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Espace vertical entre deux champs consécutifs */
+.login-form-container form .mat-form-field + .mat-form-field {
+  margin-top: 12px;   /* 8–16px selon ton goût */
+}
+
+/* Optionnel : grille simple avec un gap uniforme pour tout le formulaire */
+.login-form-container form {
+  display: grid;
+  row-gap: 12px;      /* espace entre TOUTES les lignes (champs, msg, bouton) */
+}
+
+/* Optionnel : un peu d'air au-dessus du bouton */
+.login-form-container form button[type="submit"] {
+  margin-top: 6px;
+}
+
+/* ============================================
+   Patch outline Material : garder les bordures
+   mais enlever le petit trait du notch
+   ============================================ */
+
+/* Segment gauche : on force juste la présence de la bordure,
+   Angular Material garde sa couleur d'origine */
+:host ::ng-deep .mat-mdc-form-field .mdc-notched-outline__leading {
+  border-left-width: 1px !important;
+  border-left-style: solid !important;
+  display: block !important;
+}
+
+/* Notch : on enlève la petite bordure verticale
+   à l’endroit où s’accroche le label */
+:host ::ng-deep .mat-mdc-form-field .mdc-notched-outline__notch {
+  border-left: none !important;
+}
+
+
+.alert-box {
+  color: #f44336;      /* rouge Material */
+  font-weight: 700;    /* gras */
+  margin-bottom: 0;    /* l’espace est géré par spacer */
+}
+
+.spacer-12 {
+  height: 12px;        /* ligne vide */
+}

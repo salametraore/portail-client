@@ -1,0 +1,82 @@
+<div class="page-title">
+  <h2>{{ title }}</h2>
+</div>
+
+<mat-dialog-content [formGroup]="form" class="grid grid-cols-2 gap-4">
+
+  <mat-form-field appearance="outline" class="w-full" *ngIf="canalCfg.type_station?.visible">
+    <mat-label>Type station</mat-label>
+    <mat-select
+      formControlName="type_station"
+      matTooltip="Type station">
+      <mat-option *ngFor="let item of typeStations" [value]="item.id">
+        {{ item.libelle }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="blank-row"></div>
+
+  <mat-form-field appearance="outline" class="w-full" *ngIf="canalCfg.type_canal?.visible">
+    <mat-label>Type canal</mat-label>
+    <mat-select
+      formControlName="type_canal"
+      matTooltip="Type canal">
+      <mat-option *ngFor="let item of typeCanaux" [value]="item.id">
+        {{ item.libelle }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="blank-row"></div>
+
+  <mat-form-field appearance="outline" class="w-full" *ngIf="canalCfg.largeur_bande_khz?.visible">
+    <mat-label>Largeur de bande (kHz)</mat-label>
+    <input matInput type="number" formControlName="largeur_bande_khz">
+  </mat-form-field>
+
+  <div class="blank-row"></div>
+
+  <mat-form-field appearance="outline" class="w-full"  *ngIf="canalCfg.bande_frequence?.visible">
+    <mat-label>Bande de fréquence</mat-label>
+    <mat-select
+      formControlName="bande_frequence"
+      matTooltip="Bande de fréquence">
+      <mat-option *ngFor="let item of typeBandeFrequences" [value]="item.id">
+        {{ item.libelle }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="blank-row"></div>
+
+  <mat-form-field appearance="outline" class="w-full"  *ngIf="canalCfg.zone_couverture?.visible">
+    <mat-label>Zone de couverture</mat-label>
+    <mat-select
+      formControlName="zone_couverture"
+      matTooltip="Zone de couverture">
+      <mat-option *ngFor="let item of zoneCouvertures" [value]="item.id">
+        {{ item.libelle }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="blank-row"></div>
+  <!-- Nombre de tranches facturation -->
+  <mat-form-field appearance="outline" class="w-full"
+                  *ngIf="canalCfg.nbre_tranche_facturation?.visible">
+    <mat-label>Nombre de tranches</mat-label>
+    <input
+      matInput
+      type="number"
+      formControlName="nbre_tranche_facturation"
+      min="1">
+  </mat-form-field>
+  <!-- Ajoute ici d’autres champs (mode_duplex, nbre_tranche_facturation, …) suivant ta config -->
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="warn" (click)="onCancel()">Annuler</button>
+  <button mat-flat-button color="primary" (click)="onSave()">Enregistrer</button>
+</mat-dialog-actions>
