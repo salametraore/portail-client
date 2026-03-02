@@ -3,9 +3,11 @@
 import {StatutFicheTechnique} from "./statut-fiche-technique";
 
 export class StationCanalRequest {
-  // --- Ordre demandé ---
+
   produit!: number;
-  type_station?: number | string | null;
+
+  type_station?: number  | null;
+  type_canal!: number | string;
 
   puissance?: number | null;
   puissance_unite?: string | null;
@@ -24,11 +26,8 @@ export class StationCanalRequest {
 
   nbre_tranche!: number;
 
-  localite?: string | null;
-
-  // --- Reste des propriétés ---
-  type_canal!: number | string;
   zone_couverture!: number | string;
+  localite?: string | null;
 
   created_at?: string;
   updated_at?: string;
@@ -39,8 +38,9 @@ export class StationCanalRequest {
 
 
 export class StationEquipementRequest {
-  // --- Ordre demandé ---
+
   produit?: number | null;
+
   type_station!: number | string;
 
   puissance?: number | null;
@@ -77,7 +77,7 @@ export class FicheTechniqueFrequenceRequest {
   objet?: string | null;
   commentaire?: string | null;
 
-  statut?: StatutFicheTechnique;
+  statut?: number | null;
   direction!: number;
   utilisateur?: number | null;
   date_creation?: string;
@@ -100,12 +100,12 @@ export class FicheTechniqueFrequenceRequest {
 
 
 export class StationCanal {
-  // --- Toujours en premier ---
+
   id!: number;
 
-  // --- Ordre demandé ---
   produit!: number;
-  type_station?: number | string | null;
+  type_station?: number | null;
+  type_canal!: number | string;
 
   puissance?: number | null;
   puissance_unite?: string | null;
@@ -124,11 +124,9 @@ export class StationCanal {
 
   nbre_tranche!: number;
 
-  localite?: string | null;
 
-  // --- Reste des propriétés ---
-  type_canal!: number | string;
   zone_couverture!: number | string;
+  localite?: string | null;
 
   created_at?: string;
   updated_at?: string;
@@ -138,10 +136,9 @@ export class StationCanal {
 }
 
 export class StationEquipement {
-  // Toujours en premier
+
   id!: number;
 
-  // --- Ordre harmonisé ---
   produit?: number | null;
   type_station!: number | string;
 
@@ -164,7 +161,6 @@ export class StationEquipement {
 
   localite!: string;
 
-  // --- Reste des propriétés ---
   created_at?: string;
   updated_at?: string;
 
@@ -201,4 +197,85 @@ export class FicheTechniqueFrequence {
 
   stations_canal?: StationCanal[];
   stations_equipement?: StationEquipement[];
+}
+
+
+
+export class FicheTechniqueCanal {
+  id: number;
+
+  created_at?: string;
+  updated_at?: string;
+
+  nbre_tranche_facturation?: number;
+  largeur_bande_khz?: string;
+
+  created_by?: number;
+  updated_by?: number;
+
+  fiche_technique?: number;
+
+  categorie_produit: number;
+  type_station?: number;
+  type_canal?: number;
+  zone_couverture?: number;
+}
+
+export class FicheTechniqueStation {
+  id: number;
+
+  created_at?: string;
+  updated_at?: string;
+
+  nombre_station?: number;
+  debit_kbps?: number;
+  largeur_bande_mhz?: string;
+
+  type_usage?: string;
+  nbre_tranche?: number;
+  localite?: string;
+
+  created_by?: number;
+  updated_by?: number;
+
+  fiche_technique?: number;
+
+  categorie_produit: number;
+  type_station?: number;
+  classe_puissance?: number;
+  zone_couverture?: number;
+  classe_largeur_bande?: number;
+}
+
+export class FicheTechniqueFrequenceFinal {
+  id: number;
+
+  client: number;
+  client_nom?: string;
+
+  direction: number;
+  utilisateur?: number;
+
+  date_creation?: string;
+
+  position?: number;
+  position_direction?: number;
+
+  categorie_produit?: number;
+
+  objet?: string;
+  commentaire?: string;
+
+  avis?: string;
+
+  duree?: number;
+
+  date_fin?: string;
+  date_debut?: string;
+
+  periode?: string;
+  date_avis?: string;
+
+  canaux?: FicheTechniqueCanal[];
+  stations?: FicheTechniqueStation[];
 }

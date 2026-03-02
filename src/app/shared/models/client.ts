@@ -1,5 +1,5 @@
-export interface Client {
-  readonly id: number;
+export class Client {
+  id?: number;
   created_at?: string;
   updated_at?: string;
   adresse: string;
@@ -29,3 +29,18 @@ export interface Client {
 
 }
 
+export type ClientRequest = Omit<Client, 'id'>;
+
+
+export function toClientRequest(client: Client): ClientRequest {
+  const { id, ...payload } = client;
+  return payload;
+}
+
+
+export class ClientAutorisePostal {
+  client_id?: number | null;
+  client_nom?: string | null;
+  numero_comptable?: string | null;
+  fiche_technique_autorisation_id?: number | null;
+}

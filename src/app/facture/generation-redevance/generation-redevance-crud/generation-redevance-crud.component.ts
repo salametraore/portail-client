@@ -12,7 +12,7 @@ import { FactureService } from '../../../shared/services/facture.service';
 import { MsgMessageServiceService } from '../../../shared/services/msg-message-service.service';
 import { DialogService } from '../../../shared/services/dialog.service';
 
-import { GenererRedevanceRequest } from '../../../shared/models/facture';
+import { GenererRedevanceRequest } from '../../../shared/models/redevances-a-generer';
 
 import { finalize, take } from 'rxjs/operators';
 

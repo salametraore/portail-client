@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import {ClientFactureDevisImpayes, Facture, GenererRedevanceRequest} from '../models/facture';
+import {ClientFactureDevisImpayes, Facture, FacturePenalitesRequest} from '../models/facture';
+import {  GenererRedevanceRequest, GenererRedevanceResponse} from '../models/redevances-a-generer';
 import { RequestGenererFacture } from '../models/ficheTechniques';
 import { AppConfigService } from '../../core/config/app-config.service';
+import {ListeRedevancesResponse, RedevanceAGenerer} from "../models/redevances-a-generer";
 
 @Injectable({ providedIn: 'root' })
 export class FactureService {
@@ -30,7 +32,7 @@ export class FactureService {
 
   // ---- CRUD Factures ----
   getItem(id: number): Observable<Facture> {
-    return this.http.get<Facture>(`${this.urlFactures}/${id}`);
+    return this.http.get<Facture>(`${this.urlFactures}/${id}/`);
   }
 
   create(data: Facture): Observable<Facture> {
@@ -42,7 +44,7 @@ export class FactureService {
   }
 
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.urlFactures}/${id}`, { responseType: 'text' });
+    return this.http.delete(`${this.urlFactures}/${id}/`, { responseType: 'text' });
   }
 
   getListItems(): Observable<Facture[]> {
@@ -50,13 +52,13 @@ export class FactureService {
   }
 
   getListeFacturesByClientId(id: number): Observable<Facture[]> {
-    return this.http.get<Facture[]>(`${this.urlFactures}/client/${id}`);
+    return this.http.get<Facture[]>(`${this.urlFactures}/client/${id}/`);
   }
 
   getListFacturesByEtat(id: number, etat: string): Observable<Facture[]> { // PAYEE | EN_ATTENTE
     let params = new HttpParams();
     params = params.set('etat', etat); // HttpParams est immuable -> réassigner
-    return this.http.get<Facture[]>(`${this.urlFactures}/client/${id}`, { params });
+    return this.http.get<Facture[]>(`${this.urlFactures}/client/${id}/`, { params });
   }
 
   getFacturesEnAttentesByClientId(client_id: number): Observable<Facture[]> {
@@ -77,18 +79,36 @@ export class FactureService {
   }
 
   /** Génère les redevances annuelles */
-  genererRedevancesAnnuelles(payload: GenererRedevanceRequest): Observable<any> {
-    return this.http.post(`${this.cfg.baseUrl}/generer-recurrence-annuelle/`, payload);
+  genererRedevancesAnnuelles(payload: GenererRedevanceRequest): Observable<GenererRedevanceResponse> {
+    return this.http.post<GenererRedevanceResponse>(
+      `${this.cfg.baseUrl}/generer-recurrence-annuelle/`,
+      payload
+    );
   }
 
 
+  /** Liste des redevances annuelles à générer */
+  listeRedevancesAnnuellesAgenerer(
+    payload: GenererRedevanceRequest
+  ): Observable<ListeRedevancesResponse> {
+    return this.http.post<ListeRedevancesResponse>(
+      `${this.cfg.baseUrl}/voir-recurrence-annuelle/`,
+      payload
+    );
+  }
+
 
   genererFacturePDF(facture_id: number) {
-    const url = `${this.urlFactures}/generate-pdf/${facture_id}`;
+    const url = `${this.urlFactures}/generate-pdf/${facture_id}/`;
     return this.http.get<ArrayBuffer>(url, {
       observe: 'response',
       responseType: 'arraybuffer' as 'json'
     }); // Observable<HttpResponse<ArrayBuffer>>
+  }
+
+  genererFactureExcel(facture_id: number) {
+    const url = `${this.urlFactures}/generate-excel/${facture_id}/`;
+    return this.http.get(url, { responseType: 'arraybuffer' });
   }
 
   genererDevisPDF(devis_id: number) {
@@ -103,8 +123,13 @@ export class FactureService {
     return this.http.get(`${this.cfg.baseUrl}/factures-annuler/${facture_id}/`);
   }
 
-  getListeDevisEtFacturesImpayesByClientId(id: number): Observable< ClientFactureDevisImpayes[]> {
-    return this.http.get< ClientFactureDevisImpayes[]>(`${this.cfg.baseUrl}/client-factures-devis-impayes/${id}/`);
+  getListeDevisEtFacturesImpayesByClientId(id: number): Observable<ClientFactureDevisImpayes[]> {
+    return this.http.get<ClientFactureDevisImpayes[]>(`${this.cfg.baseUrl}/client-factures-devis-impayes/${id}/`);
+  }
+
+
+  genererFacturePenalite(payload: FacturePenalitesRequest) {
+    return this.http.post(`${this.cfg.baseUrl}/factures/generer-facture-penalites`, payload);
   }
 
 }

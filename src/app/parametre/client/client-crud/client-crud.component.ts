@@ -176,9 +176,15 @@ export class ClientCrudComponent implements OnInit, AfterViewInit {
       this.dialogService.alert({ message: 'Veuillez d’abord sélectionner un client.' });
       return;
     }
+
     this.clientService.genererRelevePDF(this.client.id).subscribe({
-      next: (response: HttpResponse<Blob>) => this.pdfViewService.printDirectly(response),
+      //next: (response: HttpResponse<Blob>) => this.pdfViewService.printDirectly(response),
+      next: (buffer: ArrayBuffer) => {
+        const blob = new Blob([buffer], { type: 'application/pdf' });
+        this.pdfViewService.printDirectly(blob); // adapte à ta méthode
+      },
       error: (error) => this.dialogService.alert({ message: error })
     });
+
   }
 }

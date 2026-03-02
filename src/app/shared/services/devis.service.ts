@@ -59,8 +59,10 @@ export class DevisService {
   }
 
   genererFactureFromDevis(devis_id: number) {
-    const url = `${this.cfg.baseUrl}/generate-pdf/${devis_id}/`;
-    return this.http.get<GenererFactureFromDevisResponse>(url);
+    const url = `${this.cfg.baseUrl}/generer-facture-from-devis/`;
+    return this.http.post<GenererFactureFromDevisResponse>(url, {
+      devis_id: devis_id
+    });
   }
 
   genererDevisPDF(devis_id: number) {
@@ -69,6 +71,11 @@ export class DevisService {
       observe: 'response',
       responseType: 'arraybuffer' as 'json',
     }); // Observable<HttpResponse<ArrayBuffer>>
+  }
+
+  genererDevisExcel(devis_id: number) {
+    const url = `${this.urlDevis}/generate-excel/${devis_id}/`;
+    return this.http.get(url, { responseType: 'arraybuffer' });
   }
 
   annulerDevis(devis_id: number): Observable<any> {

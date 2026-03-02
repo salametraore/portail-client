@@ -21,6 +21,8 @@ export interface Affectation {
   id?: number;
   date_affectation: Date;
   facture_id?: number;
+  devis_id?: number;
   montant?: number;
   montant_affecte?: number;
 }
+
