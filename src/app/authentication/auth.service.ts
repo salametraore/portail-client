@@ -1,3 +1,5 @@
+/// PORTAIL CLIENT ---- src/app/authentication/auth.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -11,7 +13,6 @@ import {
 
 import { Utilisateur } from '../shared/models/utilisateur';
 import { UtilisateurRole } from '../shared/models/droits-utilisateur';
-
 import { AppConfigService } from '../core/config/app-config.service';
 
 @Injectable({ providedIn: 'root' })
@@ -23,14 +24,12 @@ export class AuthService {
   private authState = new BehaviorSubject<AuthState>(this.getInitialState());
   public authState$ = this.authState.asObservable();
 
-  // ✅ message “à afficher” sur l’écran login (persisté en session)
   private authErrorSubject = new BehaviorSubject<string | null>(
     sessionStorage.getItem('auth_error')
   );
   public authError$ = this.authErrorSubject.asObservable();
 
   private readonly CLIENT_ID_KEY = 'client_id';
-
 
   constructor(
     private http: HttpClient,
@@ -55,23 +54,34 @@ export class AuthService {
     this.setAuthError(null);
   }
 
-  /** Portail : on accepte uniquement les CLIENTS */
-  private isClient(util: any): boolean {
-    // Source de vérité : home (PORTAIL_CLIENT)
+  // ✅ Détection interne/backoffice (bloquante)
+  private isClearlyBackoffice(util: any): boolean {
     const home = String(util?.home ?? '').toUpperCase();
-    if (home) return home === 'PORTAIL_CLIENT';
-
-    // Fallback si home absent
-    return String(util?.nature ?? '').toUpperCase() === 'CLIENT';
+    const nature = String(util?.nature ?? '').toUpperCase();
+    return home === 'BACKOFFICE' || nature === 'PERSONNEL' || util?.is_staff === true;
   }
 
-  /** Cohérence minimale attendue pour un compte client */
+  private extractClientId(util: any): number | null {
+    const v = util?.client ??  null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  // ✅ Validation souple (évite rejet si OTP renvoie user “light”)
   private validateClientProfile(util: any): string | null {
-    if (!this.isClient(util)) {
+    if (!util) return 'Profil utilisateur invalide.';
+
+    if (this.isClearlyBackoffice(util)) {
       return "Cette application est réservée aux clients. Veuillez utiliser l'application Backoffice.";
     }
-    if (util?.client_id == null) return 'Profil client incohérent : client_id manquant.';
-    if (!util?.portail_role) return 'Profil client incohérent : portail_role manquant.';
+
+    const home = String(util?.home ?? '').toUpperCase();
+    const nature = String(util?.nature ?? '').toUpperCase();
+    const clientId = this.extractClientId(util);
+
+    const looksClient = home === 'PORTAIL_CLIENT' || nature === 'CLIENT' || clientId !== null;
+    if (!looksClient) return "Profil non compatible avec le Portail Client.";
+
     return null;
   }
 
@@ -96,28 +106,19 @@ export class AuthService {
   getClientId(): number | null {
     const v = sessionStorage.getItem(this.CLIENT_ID_KEY);
     if (!v) return null;
-
     const n = Number(v);
     return Number.isFinite(n) ? n : null;
   }
 
+  // ✅ PATCH: si /auth/login/ renvoie un token, on l’applique comme verify2fa
   login(payload: LoginPayload): Observable<LoginResponse> {
-    // ✅ efface anciens messages
     this.setAuthError(null);
-
     const url = `${this.apiUrl}/auth/login/`;
-    return this.http.post<LoginResponse>(url, payload).pipe(
-      catchError(this.handleError)
-    );
-  }
 
-  verify2fa(payload: TwoFaPayload): Observable<LoginResponse> {
-    const url = `${this.apiUrl}/auth/verify-otp/`;
     return this.http.post<LoginResponse>(url, payload).pipe(
-      tap((response) => {
+      tap((response: any) => {
         if (!response?.token) return;
 
-        // ✅ 1) BLOQUER si personnel/backoffice (donc non client)
         const msg = this.validateClientProfile(response.user);
         if (msg) {
           this.setAuthError(msg);
@@ -125,14 +126,38 @@ export class AuthService {
           return;
         }
 
-        // ✅ 2) OK : stocker token + user
+        this.setToken(response.token, response.user);
+        const clientId = this.extractClientId(response.user);
+        this.setClientId(clientId);
+        this.setConnectedUser(response.user as unknown as Utilisateur);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  verify2fa(payload: TwoFaPayload): Observable<LoginResponse> {
+    const url = `${this.apiUrl}/auth/verify-otp/`;
+    return this.http.post<LoginResponse>(url, payload).pipe(
+      tap((response: any) => {
+        if (!response?.token) return;
+
+        console.log('OTP user:', response.user);
+        console.log('isClearlyBackoffice:', this.isClearlyBackoffice(response.user));
+        console.log('clientId extracted:', this.extractClientId(response.user));
+        console.log('validate msg:', this.validateClientProfile(response.user));
+
+        const msg = this.validateClientProfile(response.user);
+        if (msg) {
+          this.setAuthError(msg);
+          this.hardLogoutToLogin();
+          return;
+        }
+
         this.setToken(response.token, response.user);
 
-        // ✅ 3) stocker profil étendu en session (utile portail)
+        const clientId = this.extractClientId(response.user);
+        this.setClientId(clientId);
         this.setConnectedUser(response.user as unknown as Utilisateur);
-        this.setClientId(response.user?.client_id);
-
-        // NB: pas de navigation ici, on laisse le composant décider
       }),
       catchError(this.handleError)
     );
@@ -157,7 +182,7 @@ export class AuthService {
     return s ? (JSON.parse(s) as Utilisateur) : null;
   }
 
-  // (optionnel) conservé si tu as du code existant qui l’utilise
+  // optionnel (si du code existant l’utilise)
   setConnectedUtilisateurRole(utilisateurRole: UtilisateurRole): void {
     sessionStorage.setItem('utilisateurRole', JSON.stringify(utilisateurRole));
   }
@@ -177,7 +202,7 @@ export class AuthService {
   }
 
   private isTokenValid(_token: string): boolean {
-    return true;
+    return true; // placeholder
   }
 
   requestPasswordReset(payload: PasswordResetPayload): Observable<any> {

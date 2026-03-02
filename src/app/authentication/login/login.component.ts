@@ -1,3 +1,5 @@
+/* PORTAIL CLIENT ---- src/app/authentication/login/login.component.ts */
+
 import { AuthService } from '../auth.service';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -42,16 +44,11 @@ export class LoginComponent implements OnInit {
       code: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
     });
 
+    // Message “persisté” par AuthService (ex: blocage backoffice)
     this.authService.authError$.subscribe(msg => {
       this.authErrorMsg = msg;
       this.cdr.detectChanges();
     });
-  }
-
-  private isClient(user: any): boolean {
-    const home = String(user?.home ?? '').toUpperCase();
-    if (home) return home === 'PORTAIL_CLIENT';
-    return String(user?.nature ?? '').toUpperCase() === 'CLIENT';
   }
 
   onSubmit(): void {
@@ -77,16 +74,19 @@ export class LoginComponent implements OnInit {
         return throwError(() => err);
       })
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         if (response?.detail) {
           // Bypass 2FA
           this.on2FaSubmit(this.DEFAULT_OTP_CODE);
           return;
         }
 
-        // Si jamais ton endpoint login renvoie token direct (rare ici)
-        if ((response as any)?.token) {
-          this.router.navigate(['/facture/client-direction-technique']);
+        // Si jamais ton endpoint login renvoie token direct
+        if (response?.token) {
+          // ✅ ne navigue que si le token est réellement stocké/valide
+          if (this.authService.isAuthenticated()) {
+            this.router.navigate(['/facture/client-direction-technique']);
+          }
         }
       }
     });
@@ -117,14 +117,18 @@ export class LoginComponent implements OnInit {
         return throwError(() => err);
       })
     ).subscribe({
-      next: (response: any) => {
-        // ⚠️ Double sécurité : si l’AuthService a bloqué (personnel),
-        // il a déjà nettoyé et redirigé login. On évite de naviguer ici.
-        if (!response?.token || !this.isClient(response?.user)) {
+      next: (_response: any) => {
+        /**
+         * ✅ IMPORTANT
+         * On ne se base PAS sur response.user / response.token pour décider :
+         * - si AuthService a bloqué (profil interne ou incohérent), il a fait hardLogoutToLogin()
+         *   => token non stocké => isAuthenticated() = false
+         * - si OK, le token est stocké => isAuthenticated() = true
+         */
+        if (!this.authService.isAuthenticated()) {
           return;
         }
 
-        // Navigation portail demandée
         this.router.navigate(['/facture/client-direction-technique']);
       }
     });
